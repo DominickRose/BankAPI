@@ -14,9 +14,8 @@ class AccountDaoLocal(AccountDao):
         AccountDaoLocal.local_accounts[account.account_id] = account
         return account
 
-    def get_all_accounts_for_client(self, client_id: int, lower_bound: float = 0, upper_bound: float = float('inf')) -> []:
-        all_client_accounts = [account for account in AccountDaoLocal.local_accounts.values() if account.owner_id == client_id]
-        all_client_accounts = [account for account in all_client_accounts if lower_bound <= account.balance <= upper_bound]
+    def get_all_accounts(self) -> []:
+        all_client_accounts = list(AccountDaoLocal.local_accounts.values())
         return all_client_accounts
 
     def get_single_account_by_id(self, account_id: int) -> Account:
