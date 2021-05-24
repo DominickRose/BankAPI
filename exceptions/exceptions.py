@@ -3,3 +3,9 @@ class ClientNotFoundException(Exception):
 
 class AccountNotFoundException(Exception):
     pass
+
+class AccountOwnershipException(Exception):
+    pass
+
+class InsufficientFundsException(Exception):
+    pass
