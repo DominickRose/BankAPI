@@ -8,13 +8,13 @@ from services.client_service import ClientService
 from services.client_service_impl import ClientServiceImpl
 
 clientDao = ClientDaoLocal()
-clientDao.add_client(Client(0, 'John', 'Doe', 0))
-clientDao.add_client(Client(0, 'Jane', 'Doe', 0))
-clientDao.add_client(Client(0, 'Jack', 'Doe', 0))
+clientDao.add_client(Client(0, 'John', 'Doe'))
+clientDao.add_client(Client(0, 'Jane', 'Doe'))
+clientDao.add_client(Client(0, 'Jack', 'Doe'))
 
 clientService: ClientService = ClientServiceImpl(clientDao)
 
-test_client = Client(0, 'Jill', 'Doe', 0)
+test_client = Client(0, 'Jill', 'Doe')
 
 
 def test_1_add_new_client():
@@ -46,7 +46,7 @@ def test_5_delete_client_by_id():
 
 def test_6_access_deleted_client():
     try:
-        result = clientService.get_client_by_id(test_client.client_id)
+        clientService.get_client_by_id(test_client.client_id)
         assert False
     except ClientNotFoundException as e:
         assert str(e) == f"Client with given id {test_client.client_id} does not exist"
