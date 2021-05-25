@@ -85,3 +85,80 @@ def account_routes(app: Flask):
             return jsonify(all_accounts_json), 200
         except ClientNotFoundException as e:
             return str(e), 404
+
+    @app.get('/clients/<client_id>/accounts/<account_id>')
+    def get_account_by_id(client_id: str, account_id: str):
+        try:
+            client_service.get_client_by_id(int(client_id))
+            account = account_service.get_specific_account_for_client(int(client_id), int(account_id))
+            return jsonify(account.json()), 200
+        except ClientNotFoundException as e:
+            return str(e), 404
+        except AccountNotFoundException as e:
+            return str(e), 404
+        except AccountOwnershipException as e:
+            return str(e), 403
+
+    @app.put('/clients/<client_id>/accounts/<account_id>')
+    def update_account_by_id(client_id: str, account_id: str):
+        try:
+            client_service.get_client_by_id(int(client_id))
+            account = Account.from_json(request.json)
+            account.account_id = int(account_id)
+            account.owner_id = int(client_id)
+            updated = account_service.update_account_for_client(int(client_id), account)
+            return jsonify(updated.json()), 200
+        except ClientNotFoundException as e:
+            return str(e), 404
+        except AccountNotFoundException as e:
+            return str(e), 404
+
+    @app.delete('/clients/<client_id>/accounts/<account_id>')
+    def delete_account_by_id(client_id: str, account_id: str):
+        try:
+            client_service.get_client_by_id(int(client_id))
+            account_service.delete_specific_account_for_client(int(client_id), int(account_id))
+            return f"Successfully deleted account with id {account_id}", 205
+        except ClientNotFoundException as e:
+            return str(e), 404
+        except AccountNotFoundException as e:
+            return str(e), 404
+        except AccountOwnershipException as e:
+            return str(e), 403
+
+    @app.patch('/clients/<client_id>/accounts/<account_id>')
+    def make_withdraw_or_deposit(client_id: str, account_id: str):
+        try:
+            client_service.get_client_by_id(int(client_id))
+            if 'withdraw' in request.json:
+                amount = request.json['withdraw'] * -1
+                account_service.change_money_in_account(int(client_id), int(account_id), amount)
+                return f"Withdrew ${-1 * amount} from account with id {account_id}", 200
+            else:
+                amount = request.json['deposit']
+                account_service.change_money_in_account(int(client_id), int(account_id), amount)
+                return f"Deposited ${amount} into account with id {account_id}", 200
+        except ClientNotFoundException as e:
+            return str(e), 404
+        except AccountNotFoundException as e:
+            return str(e), 404
+        except AccountOwnershipException as e:
+            return str(e), 403
+        except InsufficientFundsException as e:
+            return str(e), 422
+
+    @app.patch('/clients/<client_id>/accounts/<start_id>/transfer/<end_id>')
+    def transfer_funds(client_id: str, start_id: int, end_id: int):
+        try:
+            client_service.get_client_by_id(int(client_id))
+            amount = request.json['amount']
+            account_service.transfer_funds(int(client_id), int(start_id), int(end_id), amount)
+            return f"Succesfully transfered ${amount} from account {start_id} to account {end_id}", 200
+        except ClientNotFoundException as e:
+            return str(e), 404
+        except AccountNotFoundException as e:
+            return str(e), 404
+        except AccountOwnershipException as e:
+            return str(e), 403
+        except InsufficientFundsException as e:
+            return str(e), 422
