@@ -28,7 +28,7 @@ def test_2_get_all_accounts():
 
 def test_4_get_single_account():
     result = accountDAO.get_single_account_by_id(test_account.account_id)
-    assert result == test_account
+    assert result.account_id == test_account.account_id
 
 
 def test_5_update_account():

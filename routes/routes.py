@@ -4,6 +4,7 @@ from entities.client import Client
 from entities.account import Account
 
 from daos.client_dao_local import ClientDaoLocal
+from daos.client_dao_postgres import ClientDaoPostgres
 from daos.account_dao_local import AccountDaoLocal
 
 from services.client_service_impl import ClientServiceImpl
@@ -12,7 +13,7 @@ from services.account_service_impl import AccountServiceImpl
 from exceptions.exceptions import ClientNotFoundException, AccountNotFoundException, AccountOwnershipException, \
     InsufficientFundsException
 
-client_dao = ClientDaoLocal()
+client_dao = ClientDaoPostgres()
 client_service = ClientServiceImpl(client_dao)
 
 account_dao = AccountDaoLocal()
