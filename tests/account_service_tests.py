@@ -25,44 +25,44 @@ def test_1_add_account():
     assert test_account.owner_id == 1  # Confirm the owner is being associated with the account
 
 
-def test_2_retrieve_client_accounts1():
+def test_2_1_retrieve_client_accounts():
     results = accountService.get_all_client_accounts(1)
     assert len(results) == 3
 
 
-def test_3_retrieve_client_accounts2():
+def test_2_2_retrieve_client_accounts():
     results = accountService.get_all_client_accounts(2)
     assert len(results) == 2
 
 
-def test_4_retrieve_accounts_in_range1():
+def test_3_1_retrieve_accounts_in_range():
     results = accountService.get_all_client_accounts_in_range(1, 150, 250)
     assert len(results) == 2
 
 
-def test_5_retrieve_accounts_in_range2():
+def test_3_2_retrieve_accounts_in_range():
     results = accountService.get_all_client_accounts_in_range(1, 0, 50)
     assert len(results) == 0
 
 
-def test_5_1_retrieve_specific_account():
+def test_4_retrieve_specific_account():
     result = accountService.get_specific_account_for_client(1, test_account.account_id)
     assert result == test_account
 
 
-def test_6_update_account():
+def test_5_update_account():
     test_account.balance = 300
     updated_account = accountService.update_account_for_client(1, test_account)
     assert test_account.balance == updated_account.balance
 
 
-def test_7_delete_specific_account():
+def test_6_1_delete_specific_account():
     result = accountService.delete_specific_account_for_client(1, test_account.account_id)
     assert result  # Confrim deletion
     assert len(accountService.get_all_client_accounts(1)) == 2  # Prove deletion
 
 
-def test_8_invalid_delete():
+def test_6_2_invalid_delete():
     try:
         # Delete an already deleted account
         result = accountService.delete_specific_account_for_client(1, test_account.account_id)
@@ -71,7 +71,7 @@ def test_8_invalid_delete():
         assert str(e) == f"Account with given id {test_account.account_id} was not found"
 
 
-def test_9_invalid_delete2():
+def test_6_3__invalid_delete2():
     try:
         result = accountService.delete_specific_account_for_client(2, 1)  # Try to delete an unowned account
         assert False
@@ -79,17 +79,17 @@ def test_9_invalid_delete2():
         assert str(e) == "Client with id 2 does not own account with id 1"
 
 
-def test_10_change_money1():
+def test_7_1_change_money():
     accountService.change_money_in_account(1, 1, 50)
     assert accountService.get_specific_account_for_client(1, 1).balance == 150
 
 
-def test_11_change_money1():
+def test_7_2_change_money():
     accountService.change_money_in_account(1, 1, -75)
     assert accountService.get_specific_account_for_client(1, 1).balance == 75
 
 
-def test_12_overwithdraw():
+def test_7_3_overwithdraw():
     try:
         accountService.change_money_in_account(1, 1, -500)
         assert False
@@ -97,7 +97,7 @@ def test_12_overwithdraw():
         assert str(e) == "Account with id 1 lacks funds for withdraw"
 
 
-def test_13_invalid_access():
+def test_7_4_invalid_access():
     try:
         accountService.change_money_in_account(2, 1, 50)
         assert False
@@ -105,14 +105,14 @@ def test_13_invalid_access():
         assert str(e) == "Client with id 2 does not own account with id 1"
 
 
-def test_14_transfer_funds():
+def test_8_1_transfer_funds():
     accountService.transfer_funds(1, 1, 2, 50)
     account1 = accountService.get_specific_account_for_client(1, 1)
     account2 = accountService.get_specific_account_for_client(1, 2)
     assert account1.balance == 25 and account2.balance == 250
 
 
-def test_15_invalid_transfer():
+def test_8_2_invalid_transfer():
     try:
         accountService.transfer_funds(1, 1, 2, 50)
         assert False
