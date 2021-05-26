@@ -1,13 +1,14 @@
 from psycopg2 import connect, OperationalError
+import os
 
 def make_connection():
     try:
         con = connect(
-            host = 'database-1.cumk1bpwzhqs.us-west-1.rds.amazonaws.com',
-            database = 'postgres',
-            user = 'domrose42',
-            password = 'twistyma3r!',
-            port = '5432'
+            host = os.environ.get('host'),
+            database = os.environ.get('database'),
+            user = os.environ.get('username'),
+            password = os.environ.get('password'),
+            port = os.environ.get('port')
         )
         return con
     except OperationalError as e:
