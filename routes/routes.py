@@ -5,7 +5,9 @@ from entities.account import Account
 
 from daos.client_dao_local import ClientDaoLocal
 from daos.client_dao_postgres import ClientDaoPostgres
+
 from daos.account_dao_local import AccountDaoLocal
+from daos.account_dao_postgres import AccountDaoPostgres
 
 from services.client_service_impl import ClientServiceImpl
 from services.account_service_impl import AccountServiceImpl
@@ -16,7 +18,7 @@ from exceptions.exceptions import ClientNotFoundException, AccountNotFoundExcept
 client_dao = ClientDaoPostgres()
 client_service = ClientServiceImpl(client_dao)
 
-account_dao = AccountDaoLocal()
+account_dao = AccountDaoPostgres()
 account_service = AccountServiceImpl(account_dao)
 
 
@@ -54,6 +56,8 @@ def client_routes(app: Flask):
     @app.delete('/clients/<client_id>')
     def delete_client_by_id(client_id: str):
         try:
+            client_service.get_client_by_id(int(client_id))
+            account_service.delete_all_client_accounts(int(client_id))
             client_service.delete_client_by_id(int(client_id))
             return f"Successfully deleted client with id {client_id}", 205
         except ClientNotFoundException as e:

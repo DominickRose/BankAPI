@@ -28,6 +28,10 @@ class AccountService(ABC):
         pass
 
     @abstractmethod
+    def delete_all_client_accounts(self, client_id: int) -> bool:
+        pass
+
+    @abstractmethod
     def change_money_in_account(self, client_id: int, account_id: int, amount: int) -> bool:
         pass
 

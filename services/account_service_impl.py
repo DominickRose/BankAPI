@@ -48,6 +48,12 @@ class AccountServiceImpl(AccountService):
         account = self.get_specific_account_for_client(client_id, account_id) #Ensures ownership
         return self.account_dao.delete_account_by_id(account.account_id)
 
+    def delete_all_client_accounts(self, client_id: int) -> bool:
+        all_accounts = self.get_all_client_accounts(client_id)
+        for account in all_accounts:
+            self.delete_specific_account_for_client(client_id, account.account_id)
+        return True
+
 
     def change_money_in_account(self, client_id: int, account_id: int, amount: int) -> bool:
         account = self.get_specific_account_for_client(client_id, account_id)

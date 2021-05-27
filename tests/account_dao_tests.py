@@ -1,11 +1,13 @@
 from daos.account_dao import AccountDao
 from daos.account_dao_local import AccountDaoLocal
+from daos.account_dao_postgres import AccountDaoPostgres
 
 from entities.account import Account
 
 from exceptions.exceptions import AccountNotFoundException
 
-accountDAO: AccountDao = AccountDaoLocal()
+#accountDAO: AccountDao = AccountDaoLocal()
+accountDAO: AccountDao = AccountDaoPostgres()
 
 test_account = Account(0, 1, 0, '')
 
