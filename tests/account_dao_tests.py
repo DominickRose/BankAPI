@@ -16,7 +16,7 @@ client_dao = ClientDaoPostgres()
 test_client = Client(0, "Johnny", "Test")
 client_dao.add_client(test_client)
 
-test_account = Account(0, test_client.client_id, 0, '')
+test_account = Account(0, test_client.client_id, 0, 'Roth IRA')
 
 
 def test_1_create_account():
@@ -25,9 +25,9 @@ def test_1_create_account():
 
 
 def test_2_get_all_accounts():
-    account1 = Account(0, test_client.client_id, 0, '')
-    account2 = Account(0, test_client.client_id, 0, '')
-    account3 = Account(0, test_client.client_id, 0, '')
+    account1 = Account(0, test_client.client_id, 0, 'Checking')
+    account2 = Account(0, test_client.client_id, 0, 'Savings')
+    account3 = Account(0, test_client.client_id, 0, 'Checking')
     account_dao.add_account(account1)
     account_dao.add_account(account2)
     account_dao.add_account(account3)
@@ -50,7 +50,7 @@ def test_5_update_account():
 
 
 def test_6_update_invalid_account():
-    invalid_account = Account(0, 1, 0, '')
+    invalid_account = Account(0, 1, 0, 'Checking')
     try:
         result = account_dao.update_account(invalid_account)
         assert False
@@ -67,7 +67,7 @@ def test_7_delete_account():
 
 
 def test_8_delete_invalid_account():
-    invalid_account = Account(0, 1, 0, '')
+    invalid_account = Account(0, 1, 0, 'Savings')
     try:
         result = account_dao.delete_account_by_id(invalid_account.account_id)
         assert False

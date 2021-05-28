@@ -24,8 +24,8 @@ account_dao.get_all_accounts = MagicMock(return_value= accounts)
 
 accountService: AccountService = AccountServiceImpl(account_dao)
 
-test_account = Account(0, 0, 175, '')
-test_account2 = Account(0, 0, 175, '')
+test_account = Account(0, 0, 175, 'Checking')
+test_account2 = Account(0, 0, 175, 'Savings')
 
 def test_1_add_account():
     accountService.add_account_to_client(1, test_account)
