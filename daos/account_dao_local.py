@@ -6,8 +6,8 @@ from exceptions.exceptions import AccountNotFoundException
 
 
 class AccountDaoLocal(AccountDao):
-    account_ids = 1
-    local_accounts = {}
+    account_ids = 1 #ID Generator
+    local_accounts = {} #Dictionary to store accounts
 
     def add_account(self, account: Account) -> Account:
         account.account_id = AccountDaoLocal.account_ids
@@ -25,7 +25,7 @@ class AccountDaoLocal(AccountDao):
         try:
             result = AccountDaoLocal.local_accounts[account_id]
             return result
-        except KeyError as e:
+        except KeyError:
             raise AccountNotFoundException(f'Account with given id {account_id} was not found')
 
 
@@ -41,5 +41,5 @@ class AccountDaoLocal(AccountDao):
         try:
             del AccountDaoLocal.local_accounts[account_id]
             return True
-        except KeyError as e:
+        except KeyError:
             raise AccountNotFoundException(f'Account with given id {account_id} was not found')

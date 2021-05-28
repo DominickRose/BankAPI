@@ -34,7 +34,7 @@ class AccountDaoPostgres(AccountDao):
             raise AccountNotFoundException(f'Account with given id {account_id} was not found')
 
     def update_account(self, account: Account) -> Account:
-        self.get_single_account_by_id(account.account_id)
+        self.get_single_account_by_id(account.account_id) #Check that the record exists
 
         sql = """update account set owner_id = %s, balance = %s, account_type = %s where account_id = %s"""
         cursor = connection.cursor()
@@ -43,7 +43,7 @@ class AccountDaoPostgres(AccountDao):
         return account
 
     def delete_account_by_id(self, account_id: int) -> bool:
-        self.get_single_account_by_id(account_id)
+        self.get_single_account_by_id(account_id) #Check that the record exists
 
         sql = """delete from account where account_id = %s"""
         cursor = connection.cursor()

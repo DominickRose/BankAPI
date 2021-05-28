@@ -4,8 +4,8 @@ from entities.client import Client
 from exceptions.exceptions import ClientNotFoundException
 
 class ClientDaoLocal(ClientDAO):
-    local_clients = {}
-    current_client_id = 1
+    local_clients = {} #Dictionary to store clients locally
+    current_client_id = 1 #Generator for unique ids
 
     def add_client(self, client: Client) -> Client:
         client.client_id = ClientDaoLocal.current_client_id
