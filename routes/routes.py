@@ -37,6 +37,8 @@ def client_routes(app: Flask):
 
     @app.get('/clients/<client_id>')
     def get_client_by_id(client_id: str):
+        if not client_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client = client_service.get_client_by_id(int(client_id))
             return jsonify(client.json()), 200
@@ -45,6 +47,8 @@ def client_routes(app: Flask):
 
     @app.put('/clients/<client_id>')
     def update_client(client_id: str):
+        if not client_id.isnumeric():
+            return "Invalid URI", 400
         try:
             updated_client = Client.from_json(request.json)
             updated_client.client_id = int(client_id)
@@ -55,9 +59,16 @@ def client_routes(app: Flask):
 
     @app.delete('/clients/<client_id>')
     def delete_client_by_id(client_id: str):
+        if not client_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client_service.get_client_by_id(int(client_id))
-            account_service.delete_all_client_accounts(int(client_id))
+
+            #Delete all accounts owned by a client to avoid foreign key errors
+            all_accounts = account_service.get_all_client_accounts(int(client_id))
+            for account in all_accounts:
+                account_service.delete_specific_account_for_client(int(client_id), account.account_id)
+
             client_service.delete_client_by_id(int(client_id))
             return f"Successfully deleted client with id {client_id}", 205
         except ClientNotFoundException as e:
@@ -67,6 +78,8 @@ def client_routes(app: Flask):
 def account_routes(app: Flask):
     @app.post('/clients/<client_id>/accounts')
     def create_new_account(client_id: str):
+        if not client_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client_service.get_client_by_id(int(client_id))
             new_account = Account.from_json(request.json)
@@ -77,6 +90,8 @@ def account_routes(app: Flask):
 
     @app.get('/clients/<client_id>/accounts')
     def get_all_accounts_for_client(client_id: str):
+        if not client_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client_service.get_client_by_id(int(client_id))
             lower_bound = request.args.get('amountGreaterThan')
@@ -93,6 +108,8 @@ def account_routes(app: Flask):
 
     @app.get('/clients/<client_id>/accounts/<account_id>')
     def get_account_by_id(client_id: str, account_id: str):
+        if not client_id.isnumeric() or not account_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client_service.get_client_by_id(int(client_id))
             account = account_service.get_specific_account_for_client(int(client_id), int(account_id))
@@ -106,6 +123,8 @@ def account_routes(app: Flask):
 
     @app.put('/clients/<client_id>/accounts/<account_id>')
     def update_account_by_id(client_id: str, account_id: str):
+        if not client_id.isnumeric() or not account_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client_service.get_client_by_id(int(client_id))
             account = Account.from_json(request.json)
@@ -120,6 +139,8 @@ def account_routes(app: Flask):
 
     @app.delete('/clients/<client_id>/accounts/<account_id>')
     def delete_account_by_id(client_id: str, account_id: str):
+        if not client_id.isnumeric() or not account_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client_service.get_client_by_id(int(client_id))
             account_service.delete_specific_account_for_client(int(client_id), int(account_id))
@@ -133,6 +154,8 @@ def account_routes(app: Flask):
 
     @app.patch('/clients/<client_id>/accounts/<account_id>')
     def make_withdraw_or_deposit(client_id: str, account_id: str):
+        if not client_id.isnumeric() or not account_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client_service.get_client_by_id(int(client_id))
             if 'withdraw' in request.json:
@@ -155,7 +178,9 @@ def account_routes(app: Flask):
             return str(e), 422
 
     @app.patch('/clients/<client_id>/accounts/<start_id>/transfer/<end_id>')
-    def transfer_funds(client_id: str, start_id: int, end_id: int):
+    def transfer_funds(client_id: str, start_id: str, end_id: str):
+        if not client_id.isnumeric() or not start_id.isnumeric() or not end_id.isnumeric():
+            return "Invalid URI", 400
         try:
             client_service.get_client_by_id(int(client_id))
             if 'amount' in request.json:
